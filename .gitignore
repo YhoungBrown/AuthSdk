@@ -9,6 +9,12 @@ dist/
 web-build/
 expo-env.d.ts
 
+#Google service file
+google-services.json
+
+#Apple service file 
+GoogleService-Info.plist
+
 # Native
 .kotlin/
 *.orig.*
