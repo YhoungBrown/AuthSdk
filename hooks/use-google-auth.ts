@@ -1,60 +1,51 @@
-import * as WebBrowser from "expo-web-browser";
-import { useEffect } from "react";
+import { mapError } from "@/service/auth-service";
 import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+import {
+  signOut as firebaseSignOut,
+  getAuth,
   GoogleAuthProvider,
   signInWithCredential,
 } from "firebase/auth";
 
-import { auth } from "@/firebase";
-import { makeRedirectUri } from "expo-auth-session";
-import { useAuthRequest } from "expo-auth-session/providers/google";
-
-import { saveAuth } from "@/store/auth-store"; 
-WebBrowser.maybeCompleteAuthSession();
-
-
-
-export function useGoogleAuth() {
-  const redirectUri = makeRedirectUri({
-    scheme: "hngauth",
+export function initializeGoogle({ webClientId }: { webClientId: string }) {
+  GoogleSignin.configure({
+    webClientId,
+    offlineAccess: true,
+    forceCodeForRefreshToken: false,
   });
+}
 
-  console.log("Redirect URI:", redirectUri);
+// headless sign-in
+export async function signInWithGoogle() {
+  try {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    const userInfo = await GoogleSignin.signIn();
 
+    const idToken = userInfo.data?.idToken;
+    if (!idToken) throw new Error("NO_ID_TOKEN");
 
-  const [request, response, promptAsync] = useAuthRequest({
-    clientId:
-      "825818223932-e2afd5n1v6knbq7ef4v6gsmaisigph5o.apps.googleusercontent.com",
-    redirectUri,
-    scopes: ["profile", "email"],
-  });
+    const auth = getAuth();
+    const credential = GoogleAuthProvider.credential(idToken);
+    const result = await signInWithCredential(auth, credential);
 
-  useEffect(() => {
-    async function handleResponse() {
-      if (response?.type !== "success") return;
+    return { user: result.user };
+  } catch (err: any) {
+    console.log(err);
+    if (err.code === statusCodes.SIGN_IN_CANCELLED)
+      throw new Error("USER_CANCELLED");
+    throw mapError(err);
+  }
+}
 
-      const { authentication } = response;
-
-      if (!authentication?.accessToken) return;
-
-      // Create Firebase credential from Google access token
-      const credential = GoogleAuthProvider.credential(
-        null,
-        authentication.accessToken
-      );
-
-     
-      const result = await signInWithCredential(auth, credential);
-
-
-      await saveAuth(result.user); 
-    }
-
-    handleResponse();
-  }, [response]);
-
-  return {
-    promptAsync,
-    request,
-  };
+export async function signOutGoogle() {
+  try {
+    await GoogleSignin.signOut();
+    const auth = getAuth();
+    await firebaseSignOut(auth);
+  } catch (err) {
+    throw mapError(err);
+  }
 }
