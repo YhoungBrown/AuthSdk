@@ -1,13 +1,45 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import TopAlert from '@/components/top-alert';
+import { logout } from '@/service/auth-service';
+import { Link, useRouter } from 'expo-router';
+import { useState } from 'react';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+   const [alert, setAlert] = useState<{
+      message: string;
+      type: "success" | "error";
+    } | null>(null);
+
+
+ const handleLogout = async () => {
+  setLoading(true);
+
+  try {
+    await logout(); 
+console.log("got here")
+    router.replace("/"); 
+  } catch (error: any) {
+    console.log("Logout error:", error);
+
+    
+    setAlert({
+      message: error.message || "Logout failed",
+      type: "error"
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -17,6 +49,18 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+
+
+      {alert && (
+          <TopAlert
+            message={alert.message}
+            duration={4000}
+            type={alert.type}
+            onHide={() => setAlert(null)} 
+          />
+        )}
+
+
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
@@ -43,18 +87,18 @@ export default function HomeScreen() {
           </Link.Trigger>
           <Link.Preview />
           <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
+            <Link.MenuAction title="Action" icon="cube" onPress={() => ""} />
             <Link.MenuAction
               title="Share"
               icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
+              onPress={() => ""}
             />
             <Link.Menu title="More" icon="ellipsis">
               <Link.MenuAction
                 title="Delete"
                 icon="trash"
                 destructive
-                onPress={() => alert('Delete pressed')}
+                onPress={() => ""}
               />
             </Link.Menu>
           </Link.Menu>
@@ -74,6 +118,19 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+
+
+      <View style={{marginTop: 20}}/>
+
+      {loading ? (
+        <ActivityIndicator size={"large"} color={"#4A90E2"} style={styles.ActivityIndicator}/>
+      ) : (
+      <TouchableOpacity style={styles.logoutContainer} onPress={handleLogout}>
+        <Text style={styles.logOutText}>Log Out</Text>
+      </TouchableOpacity>
+
+      )}
+
     </ParallaxScrollView>
   );
 }
@@ -94,5 +151,24 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  logoutContainer: {
+    borderWidth: 1,
+    padding: 10,
+    paddingVertical: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 15,
+    height: 55,
+    borderColor: "#4A90E2"
+  },
+  logOutText: {
+    fontSize: 16,
+    fontWeight: 500,
+    color: "#4A90E2"
+  },
+  ActivityIndicator:{
+    justifyContent: "center",
+    alignItems: "center"
   },
 });

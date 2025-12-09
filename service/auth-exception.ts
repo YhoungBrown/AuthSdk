@@ -6,3 +6,5 @@ export class TokenExpiredException extends Error {}
 export class NetworkException extends Error {}
 export class TooManyRequestsException extends Error {}
 export class PasswordResetFailedException extends Error {}
+export class LogoutFailedException extends Error {}
+export class AuthOperationFailedException extends Error {}

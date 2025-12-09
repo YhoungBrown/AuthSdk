@@ -207,7 +207,7 @@ const Index = ({ config }: { config?: AuthConfig }) => {
 
           {providerConfig.apple && appleAvailable && (
             <TouchableOpacity
-              style={[styles.googleButton, {marginTop: 6}]}
+              style={[styles.googleButton, {marginTop: 20}]}
               onPress={signInWithApple}
             >
               <Text style={styles.googleText}>Continue with Apple</Text>

@@ -5,18 +5,21 @@ import {
   signInWithEmailAndPassword
 } from "firebase/auth";
 
-import { saveAuth } from "@/store/auth-store";
+import { saveAuth, useAuthStore } from "@/store/auth-store";
+import * as SecureStore from "expo-secure-store";
 
 import {
-  InvalidCredentialsException,
-  UserNotFoundException,
+  AuthOperationFailedException,
   EmailAlreadyInUseException,
-  WeakPasswordException,
-  TokenExpiredException,
+  InvalidCredentialsException,
+  LogoutFailedException,
   NetworkException,
+  TokenExpiredException,
   TooManyRequestsException,
-  PasswordResetFailedException,
+  UserNotFoundException,
+  WeakPasswordException
 } from '@/service/auth-exception';
+import { router } from "expo-router";
 
 
 
@@ -59,6 +62,19 @@ export async function forgotPassword(email: string) {
     throw mapError(err);
   }
 }
+
+
+export async function logout() {
+  try {
+    await SecureStore.deleteItemAsync("auth");
+    await auth.signOut();
+    useAuthStore.getState().reset();  
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to log out. Please try again.");
+  }
+}
+
 
 
 export function mapError(err: any) {
@@ -104,7 +120,7 @@ export function mapError(err: any) {
 
     // ----- Fallback -----
     default:
-      return new PasswordResetFailedException("Operation failed. Please try again");
+      return new AuthOperationFailedException("Operation failed. Please try again");
   }
 }
 
