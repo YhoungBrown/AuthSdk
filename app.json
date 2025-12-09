@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hng.hngauth"
+      "bundleIdentifier": "com.hng.hngauth",
+      "usesAppleSignIn": true
     },
     "android": {
       "package": "com.hng.hngauth",
@@ -41,7 +42,8 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true,

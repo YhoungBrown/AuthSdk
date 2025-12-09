@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import * as SecureStore from "expo-secure-store";
 import { auth } from "@/firebase";
-import { getIdToken, User } from "firebase/auth";
+import * as SecureStore from "expo-secure-store";
+import { User } from "firebase/auth";
+import { create } from "zustand";
 
 type AuthState = {
   status: "authenticated" | "unauthenticated" | "tokenExpired";
@@ -32,6 +32,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     }),
 }));
 
+
+
 export async function initializeAuth() {
   try {
     const saved = await SecureStore.getItemAsync("auth");
@@ -47,21 +49,27 @@ export async function initializeAuth() {
 
     if (expired) {
       useAuthStore.getState().setAuth({
-        status: "tokenExpired" as const,
+        status: "tokenExpired",
+        ...data,
+      });
+      return;
+    }
+
+    if (!auth.currentUser) {
+      // Firebase not initialized yet, skip refresh
+      useAuthStore.getState().setAuth({
+        status: "authenticated",
         ...data,
       });
       return;
     }
 
     // Attempt token refresh
-    const newIdToken = await auth.currentUser?.getIdToken(true);
+    const newIdToken = await auth.currentUser.getIdToken(true);
+    const expirationTime = Date.now() + 55 * 60 * 1000;
 
-    if (!newIdToken) throw new Error("Refresh failed");
-
-    const expirationTime = Date.now() + 55 * 60 * 1000; // 55 min
-
-    const authPayload = {
-      status: "authenticated" as const,
+    const authPayload: Partial<AuthState> = {
+      status: "authenticated",
       user: auth.currentUser,
       idToken: newIdToken,
       refreshToken: data.refreshToken,
@@ -69,14 +77,14 @@ export async function initializeAuth() {
     };
 
     useAuthStore.getState().setAuth(authPayload);
-
-    // Persist new token
     await SecureStore.setItemAsync("auth", JSON.stringify(authPayload));
+
   } catch (e) {
     useAuthStore.getState().reset();
-    console.log("Initialize error ", e )
+    console.log("Initialize error ", e);
   }
 }
+
 
 
 

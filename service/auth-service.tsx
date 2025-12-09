@@ -7,6 +7,17 @@ import {
 
 import { saveAuth } from "@/store/auth-store";
 
+import {
+  InvalidCredentialsException,
+  UserNotFoundException,
+  EmailAlreadyInUseException,
+  WeakPasswordException,
+  TokenExpiredException,
+  NetworkException,
+  TooManyRequestsException,
+  PasswordResetFailedException,
+} from '@/service/auth-exception';
+
 
 
 
@@ -45,94 +56,55 @@ export async function forgotPassword(email: string) {
     await sendPasswordResetEmail(auth, email);
     return true;
   } catch (err: any) {
-    throw mapForgotError(err);
+    throw mapError(err);
   }
 }
 
 
-
-// function mapError(err: any) {
-//   const code = err.code;
-
-//   switch (code) {
-//     case "auth/wrong-password":
-//       return new Error("Invalid password");
-//     case "auth/user-not-found":
-//       return new Error("User not found");
-//     case "auth/email-already-in-use":
-//       return new Error("Email already in use");
-//     case "auth/weak-password":
-//       return new Error("Weak password");
-//     default:
-//       return new Error("Authentication failed");
-//   }
-// }
-
-
-function mapError(err: any) {
+export function mapError(err: any) {
   const code = err?.code;
 
   switch (code) {
+    // ----- Email / Account Errors -----
+    case "auth/invalid-email":           
+      return new InvalidCredentialsException("Invalid email format");
 
-    // Email errors
-    case "auth/invalid-email":
-      return new Error("Invalid email format");
+    case "auth/user-not-found":        
+      return new UserNotFoundException("User does not exist");
 
-    case "auth/user-not-found":
-      return new Error("User does not exist");
+    case "auth/email-already-in-use":   
+      return new EmailAlreadyInUseException("Email already in use");
 
-    // Password errors
-    case "auth/wrong-password":
-    case "auth/invalid-password":
-      return new Error("Incorrect password");
+    case "auth/missing-email":           
+      return new InvalidCredentialsException("Email is required");
 
-    case "auth/weak-password":
-      return new Error("Password is too weak");
+    // ----- Password Errors -----
+    case "auth/wrong-password":          
+    case "auth/invalid-password":        
+      return new InvalidCredentialsException("Incorrect password");
 
-    // Account/Access
-    case "auth/user-disabled":
-      return new Error("This account has been disabled");
+    case "auth/weak-password":           
+      return new WeakPasswordException("Password is too weak");
 
-    case "auth/operation-not-allowed":
-      return new Error("Email/password sign-in is disabled");
+    // ----- Token / Auth State -----
+    case "auth/user-disabled":           
+      return new InvalidCredentialsException("This account has been disabled");
 
-    // Rate limiting
+    case "auth/invalid-user-token":      
+    case "auth/user-token-expired":
+      return new TokenExpiredException("Your session has expired. Please sign in again.");
+
+    // ----- Rate limiting -----
     case "auth/too-many-requests":
-      return new Error("Too many attempts. Try again later");
+      return new TooManyRequestsException("Too many attempts. Try again later");
 
-    // Network
+    // ----- Network -----
     case "auth/network-request-failed":
-      return new Error("Network error. Check your connection");
+      return new NetworkException("Network error. Check your connection");
 
+    // ----- Fallback -----
     default:
-      return new Error("Authentication failed. Please try again");
-  }
-}
-
-
-
-
-function mapForgotError(err: any) {
-  const code = err?.code;
-
-  switch (code) {
-    case "auth/user-not-found":
-      return new Error("No account found with this email");
-
-    case "auth/invalid-email":
-      return new Error("Invalid email address");
-
-    case "auth/missing-email":
-      return new Error("Email is required");
-
-    case "auth/too-many-requests":
-      return new Error("Too many attempts. Try again later");
-
-    case "auth/network-request-failed":
-      return new Error("Network error. Check your connection");
-
-    default:
-      return new Error("Password reset failed");
+      return new PasswordResetFailedException("Operation failed. Please try again");
   }
 }
 

@@ -1,24 +1,34 @@
 import TopAlert from '@/components/top-alert';
 import { signInWithEmail } from '@/service/auth-service';
-import { saveAuth, useAuthStore } from "@/store/auth-store";
+import { saveAuth } from "@/store/auth-store";
 import styles from '@/stylesheets/sign-in-stylesheet';
+import { AuthConfig } from '@/type';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { RelativePathString, router } from "expo-router";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as AppleAuthentication from 'expo-apple-authentication';
 
 
 
 
-const Index = () => {
+
+const Index = ({ config }: { config?: AuthConfig }) => {
   const inset = useSafeAreaInsets();
-  const { status } = useAuthStore();
+  
+
+   const providerConfig = {
+    emailPassword: config?.emailPassword ?? true,
+    google: config?.google ?? true,
+    apple: config?.apple ?? true,
+  };
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [secureText, setSecureText] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+  const [appleAvailable, setAppleAvailable] = useState<boolean>(false);
 
    
 
@@ -29,6 +39,14 @@ const Index = () => {
 
 
 
+
+
+  useEffect(() => {
+  (async () => {
+    const available = await AppleAuthentication.isAvailableAsync();
+    setAppleAvailable(available);
+  })();
+}, []);
 
 
   const signIn = async () => {
@@ -73,6 +91,15 @@ const Index = () => {
     }
   };
 
+
+  const signInWithApple = async () => {
+
+  }
+
+
+  const signInWithGoogle = async () => {
+    
+  }
 
 
 
@@ -174,9 +201,19 @@ const Index = () => {
           )}
 
 
-          <TouchableOpacity style={styles.googleButton}>
+          <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
             <Text style={styles.googleText}>Continue with Google</Text>
           </TouchableOpacity>
+
+          {providerConfig.apple && appleAvailable && (
+            <TouchableOpacity
+              style={[styles.googleButton, {marginTop: 6}]}
+              onPress={signInWithApple}
+            >
+              <Text style={styles.googleText}>Continue with Apple</Text>
+            </TouchableOpacity>
+          )}
+
 
           <TouchableOpacity
             style={styles.signUpContainer}

@@ -69,6 +69,7 @@ googleButton: {
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    marginTop: 6
 },
 googleText: {
      color: '#fff', 
