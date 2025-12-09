@@ -1,13 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { env } from "./env";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAzjFYHkIKNSeK4KdsBQBDa6FcEp9xWf7M",
-  authDomain: "hngauth-221e8.firebaseapp.com",
-  projectId: "hngauth-221e8",
-  storageBucket: "hngauth-221e8.firebasestorage.app",
-  messagingSenderId: "825818223932",
-  appId: "1:825818223932:web:ANYTHING" 
+  apiKey: env.apiKey,
+  authDomain: env.authDomain,
+  projectId: env.projectId,
+  storageBucket: env.storageBucket,
+  messagingSenderId: env.messagingSenderId,
+  appId: env.appId,
 };
 
 const app = initializeApp(firebaseConfig);
