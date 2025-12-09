@@ -161,7 +161,7 @@ const signUp = async () => {
 
           <TouchableOpacity
             style={styles.signInContainer}
-            onPress={() => router.push('/' as RelativePathString)}
+            onPress={() => router.push('/sign-in' as RelativePathString)}
           >
             <Text style={styles.signInText}>Already have an account? Sign In</Text>
           </TouchableOpacity>

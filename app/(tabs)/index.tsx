@@ -30,7 +30,7 @@ export default function HomeScreen() {
     try {
       await logout();
       console.log("got here");
-      router.replace("/");
+      router.replace("/sign-in");
     } catch (error: any) {
       console.log("Logout error:", error);
 
