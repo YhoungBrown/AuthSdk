@@ -120,7 +120,7 @@ const onForgotPassword = async () => {
 
           <TouchableOpacity
             style={styles.signInContainer}
-            onPress={() => router.push('/' as RelativePathString)}
+            onPress={() => router.push('/sign-in' as RelativePathString)}
           >
             <Text style={styles.signInText}>Back to Sign In</Text>
           </TouchableOpacity>
