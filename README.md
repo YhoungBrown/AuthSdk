@@ -220,6 +220,12 @@ Feel free to modify, extend, or embed this SDK in your projects.
 
 ---
 
+## Test APK
+
+Link to test APK: [https://drive.google.com/file/d/1wI_O4G2y6VGKZyMWieKEg7vzcywuhLyb/view?usp=sharing]
+
+---
+
 ## ❤️ Contributing
 
 Pull requests are welcome — especially improvements to documentation & reliability.
