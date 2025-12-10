@@ -1,4 +1,5 @@
 import styles from "@/stylesheets/top-alert-stylesheet";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useRef } from "react";
 import { Animated, Text, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -76,6 +77,11 @@ useEffect(() => {
         },
       ]}
     >
+      <Ionicons
+        name={type === "error" ? "warning" : "checkmark-circle"}
+        size={24}
+        color="#fff"
+      />
       <Text style={textStyle}>{message}</Text>
     </Animated.View>
   );

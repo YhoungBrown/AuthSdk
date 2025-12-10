@@ -286,7 +286,7 @@ const toastStyles = StyleSheet.create({
     right: 20,
     zIndex: 9999,
     borderRadius: 8,
-    padding: 16,
+    padding: 14,
     flexDirection: "row",
     alignItems: "center",
     shadowColor: "#000",
