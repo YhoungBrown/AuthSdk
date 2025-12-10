@@ -7,10 +7,8 @@ export {
   initializeGoogleAuth,
   logout,
   mapError,
-  monitorAuthState,
-  signInWithEmail, // <--- Add this
-  signInWithGoogle,
-  signUpWithEmail,
+  monitorAuthState, signInWithApple, signInWithEmail, // <--- Add this
+  signInWithGoogle, signUpWithEmail
 } from "./src/core/auth-service";
 export { onAuthStateChanged, useAuthSDK } from "./src/core/auth-store";
 
@@ -19,3 +17,4 @@ export { AuthLoginScreen } from "./src/ui/SignIn";
 export { AuthRegisterScreen } from "./src/ui/SignUp";
 
 export * from "./src/types";
+

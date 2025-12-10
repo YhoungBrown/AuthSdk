@@ -8,19 +8,26 @@ export const useAuthSDK = create<AuthState>((set) => ({
   status: "unauthenticated",
   user: null,
   initialized: false,
-
   signIn: (user) =>
     set({
       status: "authenticated",
       user,
-      initialized: true, // <--- ADD THIS
+      initialized: true,
     }),
 
   signOut: () =>
     set({
       status: "unauthenticated",
       user: null,
-      initialized: true, // <--- ADD THIS
+      initialized: true,
+    }),
+
+  // mark token as expired (used by auth-service when mapping token errors)
+  setTokenExpired: () =>
+    set({
+      status: "tokenExpired",
+      user: null,
+      initialized: true,
     }),
 }));
 

@@ -15,6 +15,7 @@ export interface AuthState {
   initialized: boolean;
   signIn: (user: AuthUser) => void;
   signOut: () => void;
+  setTokenExpired?: () => void;
 }
 
 // --- Configuration Types ---
@@ -48,6 +49,11 @@ export interface AuthLoginProps {
    * Pass `signInWithGoogle` from the SDK here if using the UI.
    */
   onGooglePress?: () => Promise<void>;
+
+  /** * Logic for Apple Sign In.
+   * Pass `signInWithApple` from the SDK here if using the UI.
+   */
+  onApplePress?: () => Promise<void>;
 
   /** Optional custom error handler. If not provided, uses internal Toast. */
   onError?: (message: string) => void;

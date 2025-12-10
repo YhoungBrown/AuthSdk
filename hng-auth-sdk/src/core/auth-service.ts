@@ -2,12 +2,14 @@ import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import * as AppleAuthentication from "expo-apple-authentication";
 import * as SecureStore from "expo-secure-store";
 import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   getAuth,
   GoogleAuthProvider,
+  OAuthProvider,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithCredential,
@@ -67,6 +69,9 @@ export function mapError(err: any) {
       return new WeakPasswordException();
 
     case "auth/user-token-expired":
+      try {
+        useAuthSDK.getState().setTokenExpired?.();
+      } catch (e) {}
       return new TokenExpiredException();
 
     case "auth/network-request-failed":
@@ -130,6 +135,33 @@ export async function signInWithGoogle() {
     return await handleAuthSuccess(res.user);
   } catch (err: any) {
     console.log("Google Sign In Error:", err);
+    throw mapError(err);
+  }
+}
+
+export async function signInWithApple() {
+  const auth = getAuth();
+  try {
+    const credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+      ],
+    });
+
+    const idToken = (credential as any)?.identityToken;
+
+    if (!idToken) throw new Error("NO_ID_TOKEN");
+
+    const provider = new OAuthProvider("apple.com");
+    // provider.credential() accepts idToken and optionally rawNonce
+    const firebaseCred = provider.credential({ idToken });
+
+    const res = await signInWithCredential(auth, firebaseCred);
+
+    return await handleAuthSuccess(res.user);
+  } catch (err: any) {
+    console.log("Apple Sign In Error:", err);
     throw mapError(err);
   }
 }
