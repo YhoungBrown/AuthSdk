@@ -10,6 +10,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     paddingVertical: 12,
+    padding: 14,
+    flexDirection: "row",
     paddingHorizontal: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -22,24 +24,22 @@ const styles = StyleSheet.create({
 
 
   alertSuccess: {
-    backgroundColor: "#e6f9ed",
-    borderColor: "#34a853",
+    backgroundColor: "#4CAF50",
   },
   alertSuccessText: {
-    fontFamily: "RethinkSans-Medium",
-    color: "#196f3d",
+    color: "#fff",
+    fontWeight: "600",
+    marginLeft: 10,
     fontSize: 14,
     textAlign: "center",
   },
-
-
   alertError: {
-    backgroundColor: "#fdecea",
-    borderColor: "#d93025",
+     backgroundColor: "#FF5252",
   },
   alertErrorText: {
-    fontFamily: "RethinkSans-Medium",
-    color: "#b21f1f",
+    color:"#fff",
+    fontWeight: "600",
+    marginLeft: 10,
     fontSize: 14,
     textAlign: "center",
   },

@@ -15,6 +15,9 @@ google-services.json
 #Apple service file 
 GoogleService-Info.plist
 
+#env file
+.env
+
 # Native
 .kotlin/
 *.orig.*
