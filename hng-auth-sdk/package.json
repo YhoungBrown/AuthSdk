@@ -1,0 +1,15 @@
+{
+  "name": "hng-auth-sdk",
+  "version": "1.0.0",
+  "description": "Modular Authentication SDK for HNG Stage 8",
+  "main": "index.ts",
+  "author": "hng_mobile",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "firebase": "^10.0.0",
+    "expo-secure-store": "*",
+    "zustand": "*"
+  }
+}
