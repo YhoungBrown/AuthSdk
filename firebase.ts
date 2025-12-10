@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeAuth } from "firebase/auth";
 import { env } from "./env";
 
 const firebaseConfig = {
@@ -11,5 +11,14 @@ const firebaseConfig = {
   appId: env.appId,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+// Debugging: Check if keys are actually loading
+if (!firebaseConfig.apiKey) {
+  console.error(
+    "Firebase Config Error: API Key is missing. Check your .env file and restart metro with --clear"
+  );
+}
+
+let app = initializeApp(firebaseConfig);
+let auth = initializeAuth(app);
+
+export { auth };
