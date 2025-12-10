@@ -7,21 +7,35 @@ It supports both **Headless Mode (logic only)** and **Default Mode (Pre-built UI
 
 ## Features
 
-- **Auth Providers:** Email/Password & Google Sign-In.
+- **Auth Providers:** Email/Password, Google Sign-In, and Apple Sign-In (expandable to other Firebase providers).
 - **State Management:** Built-in Zustand store for `authenticated`, `unauthenticated`, and `tokenExpired` states.
 - **Flexible UI:** Dark-mode optimized Login and Signup screens with built‑in Toast notifications.
 - **Session Persistence:** Automatically restores user sessions on app launch.
 - **Unified Error Handling:** Maps Firebase errors into simple custom exceptions.
+- **Dual Modes:** Pre-built UI components OR headless (custom UI) with exposed methods & hooks.
 
 ---
 
 ## 1. Installation
 
-This SDK is a **local module**. Ensure you install all required peer dependencies:
+If using npm:
+```bash
+npm install hng-auth-sdk
+```
+
+Then install all required peer dependencies:
 
 ```bash
 npx expo install firebase @react-native-async-storage/async-storage @react-native-google-signin/google-signin expo-secure-store expo-apple-authentication zustand
 ```
+
+**Peer Dependencies:**
+- `firebase` (^10.0.0)
+- `expo-secure-store`
+- `expo-apple-authentication`
+- `@react-native-google-signin/google-signin`
+- `zustand`
+- `react-native` & `react`
 
 ---
 
@@ -75,7 +89,7 @@ if (getApps().length === 0) {
 
 ### **Step C: Configure Root Layout**
 
-In `app/_layout.tsx`, initialize Google & start the auth monitor:
+In `app/_layout.tsx`, initialize Google, Apple, and start the auth monitor:
 
 ```ts
 // app/_layout.tsx
@@ -87,14 +101,20 @@ import { env } from "@/env";
 
 export default function RootLayout() {
   useEffect(() => {
+    // Initialize Google Auth (if using Google Sign-In)
     initializeGoogleAuth(env.clientId || "");
+    
+    // Start monitoring auth state changes
     const unsubscribe = monitorAuthState();
+    
     return () => unsubscribe();
   }, []);
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }
 ```
+
+**Note:** Apple Sign-In is auto-initialized via Firebase. No additional setup needed in code for Apple.
 
 ---
 
@@ -105,21 +125,24 @@ These pre-built screens handle all logic internally.
 ### **Sign In Screen**
 
 ```ts
-import { AuthLoginScreen, signInWithGoogle } from "../hng-auth-sdk";
+import { AuthLoginScreen } from "../hng-auth-sdk";
 import { router } from "expo-router";
 
 export default function SignIn() {
   return (
     <AuthLoginScreen
-      config={{ enableGoogle: true, enableApple: false }}
+      config={{ enableGoogle: true, enableApple: true }}
       onSuccess={() => router.replace("/(tabs)")}
       onRegisterPress={() => router.push("/sign-up")}
       onForgotPasswordPress={() => router.push("/forgot-password")}
-      onGooglePress={async () => await signInWithGoogle()}
     />
   );
 }
 ```
+
+**Config Options:**
+- `enableGoogle` (boolean): Show/hide Google Sign-In button. Default: `true`.
+- `enableApple` (boolean): Show/hide Apple Sign-In button. Default: `true`.
 
 ---
 
@@ -195,21 +218,107 @@ const {
 | `signInWithEmail(email, password)` | Signs in & updates store                      |
 | `signUpWithEmail(email, password)` | Registers user & updates store                |
 | `signInWithGoogle()`               | Launches Google OAuth flow                    |
+| `signInWithApple()`                | Launches Apple OAuth flow (iOS only)          |
 | `logout()`                         | Signs out & clears store                      |
 | `mapError(error)`                  | Converts Firebase errors to custom exceptions |
+| `forgotPassword(email)`            | Sends password reset email                    |
+| `initializeGoogleAuth(webClientId)` | Configures Google Sign-In (required)         |
+| `monitorAuthState()`               | Listens to Firebase auth state changes       |
 
 ---
 
 ## Exceptions
 
-The SDK provides custom exception classes:
+The SDK provides custom exception classes for unified error handling:
 
-- **InvalidCredentialsException**
-- **UserNotFoundException**
-- **EmailAlreadyInUseException**
-- **WeakPasswordException**
-- **TokenExpiredException**
-- **NetworkException**
+```ts
+import {
+  InvalidCredentialsException,
+  UserNotFoundException,
+  EmailAlreadyInUseException,
+  WeakPasswordException,
+  TokenExpiredException,
+  NetworkException,
+} from 'hng-auth-sdk';
+```
+
+**Usage Example:**
+```ts
+import { signInWithEmail, mapError } from 'hng-auth-sdk';
+
+try {
+  await signInWithEmail('user@example.com', 'password');
+} catch (err: any) {
+  const mapped = mapError(err);
+  
+  if (mapped instanceof InvalidCredentialsException) {
+    alert('Wrong email or password');
+  } else if (mapped instanceof UserNotFoundException) {
+    alert('Account does not exist');
+  } else if (mapped instanceof TokenExpiredException) {
+    // Re-authenticate user
+  }
+}
+```
+
+**Exception Types:**
+- `InvalidCredentialsException` — Wrong password/email combination
+- `UserNotFoundException` — Account does not exist
+- `EmailAlreadyInUseException` — Email already registered
+- `WeakPasswordException` — Password doesn't meet requirements
+- `TokenExpiredException` — Session expired, re-authenticate
+- `NetworkException` — Network connectivity issue
+
+---
+
+## 6. Apple Sign-In Setup (Consumer Prerequisites)
+
+To use Apple Sign-In, consumers must:
+
+### **A. Apple Developer Setup**
+1. Create/enable an App ID with "Sign in with Apple" capability.
+2. Create a Service ID (e.g., `com.yourcompany.appname.service`).
+3. Generate a Private Key (.p8 file) for Apple Sign-In and note the **Key ID**.
+4. Note your **Team ID** (top-right of Apple Developer portal).
+
+### **B. Firebase Setup**
+1. In **Firebase Console** > **Authentication** > **Sign-in method**, enable **Apple**.
+2. Upload to Firebase:
+   - Team ID
+   - Service ID
+   - Key ID
+   - Private Key (.p8 file)
+
+### **C. iOS App Configuration**
+1. In **Xcode**, enable "Sign in with Apple" capability.
+2. In `app.json`, ensure correct bundle ID:
+   ```json
+   {
+     "ios": {
+       "bundleIdentifier": "com.yourcompany.appname"
+     }
+   }
+   ```
+3. Build with `eas build` or `expo build`.
+
+### **D. SDK Usage**
+```tsx
+import { AuthLoginScreen } from 'hng-auth-sdk';
+
+<AuthLoginScreen
+  config={{ enableApple: true }}
+  onSuccess={(user) => console.log('Signed in:', user.email)}
+  onRegisterPress={() => {}}
+  onForgotPasswordPress={() => {}}
+/>
+```
+
+Or use headless mode:
+```ts
+import { signInWithApple } from 'hng-auth-sdk';
+
+const user = await signInWithApple();
+```
 
 ---
 
@@ -228,4 +337,10 @@ Link to test APK: [https://drive.google.com/file/d/1wI_O4G2y6VGKZyMWieKEg7vzcywu
 
 ## ❤️ Contributing
 
-Pull requests are welcome — especially improvements to documentation & reliability.
+Pull requests are welcome — especially improvements to documentation, security, and reliability.
+
+---
+
+## Support
+
+For issues, feature requests, or questions, please open an issue on the repository.
