@@ -17,7 +17,11 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { signInWithEmail } from "../core/auth-service";
+import {
+  signInWithApple,
+  signInWithEmail,
+  signInWithGoogle,
+} from "../core/auth-service";
 
 import { AuthLoginProps } from "../types";
 
@@ -76,6 +80,7 @@ export const AuthLoginScreen = ({
   onRegisterPress,
   onForgotPasswordPress,
   onGooglePress,
+  onApplePress,
   onError,
   style,
 }: AuthLoginProps) => {
@@ -135,13 +140,11 @@ export const AuthLoginScreen = ({
   };
 
   const handleGoogleSignIn = async () => {
-    if (!onGooglePress) {
-      setToast({ message: "Google Sign-In not configured", type: "error" });
-      return;
-    }
     setLoading(true);
     try {
-      await onGooglePress();
+      if (onGooglePress) await onGooglePress();
+      else await signInWithGoogle();
+
       setToast({ message: "Sign-In Successful", type: "success" });
     } catch (error: any) {
       if (onError) {
@@ -149,6 +152,27 @@ export const AuthLoginScreen = ({
       } else {
         setToast({
           message: error.message || "Google Sign-In Failed",
+          type: "error",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    try {
+      if (onApplePress) await onApplePress();
+      else await signInWithApple();
+
+      setToast({ message: "Sign-In Successful", type: "success" });
+    } catch (error: any) {
+      if (onError) {
+        onError(error.message || "Apple Sign-In Failed");
+      } else {
+        setToast({
+          message: error.message || "Apple Sign-In Failed",
           type: "error",
         });
       }
@@ -258,7 +282,7 @@ export const AuthLoginScreen = ({
           {providerConfig.apple && appleAvailable && (
             <TouchableOpacity
               style={[styles.googleButton, { marginTop: 20 }]}
-              onPress={() => {}}
+              onPress={handleAppleSignIn}
             >
               <Text style={styles.googleText}>Continue with Apple</Text>
             </TouchableOpacity>
