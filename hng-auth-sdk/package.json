@@ -1,15 +1,34 @@
 {
   "name": "hng-auth-sdk",
   "version": "1.0.0",
-  "description": "Modular Authentication SDK for HNG Stage 8",
-  "main": "index.ts",
-  "author": "hng_mobile",
+  "description": "Modular Firebase Authentication SDK for React Native / Expo.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "npx tsc"
+  },
+  "keywords": [
+    "firebase",
+    "react-native",
+    "auth",
+    "expo",
+    "sdk"
+  ],
+  "author": "YoungBrown",
   "license": "MIT",
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "firebase": "^10.0.0",
+    "firebase": ">=9.0.0",
+    "@react-native-async-storage/async-storage": "*",
+    "@react-native-google-signin/google-signin": "*",
     "expo-secure-store": "*",
+    "expo-apple-authentication": "*",
     "zustand": "*"
   }
 }
