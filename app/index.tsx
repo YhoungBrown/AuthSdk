@@ -3,7 +3,7 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
 // Import UI and Logic from YOUR SDK
-import { AuthLoginScreen, signInWithGoogle, useAuthSDK } from "../hng-auth-sdk";
+import { AuthLoginScreen, signInWithGoogle, useAuthSDK } from "hng-auth-sdk";
 
 export default function IndexRoute() {
   const { status, initialized } = useAuthSDK();

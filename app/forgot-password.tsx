@@ -13,8 +13,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import TopAlert from "@/components/top-alert";
-import { forgotPassword } from "@/hng-auth-sdk";
 import styles from "@/stylesheets/reset-password-stylesheet";
+import { forgotPassword } from "hng-auth-sdk";
 
 const Index = () => {
   const inset = useSafeAreaInsets();
