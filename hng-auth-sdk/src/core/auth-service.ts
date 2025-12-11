@@ -39,7 +39,7 @@ export function initializeGoogleAuth(webClientId: string) {
 export function mapError(err: any) {
   const code = err?.code;
 
-  // Google Specific Error Codes
+
   if (code === statusCodes.SIGN_IN_CANCELLED) {
     return new AuthOperationFailedException("Sign-in cancelled by user.");
   }
@@ -49,7 +49,7 @@ export function mapError(err: any) {
     );
   }
 
-  // Firebase Error Codes
+ 
   switch (code) {
     case "auth/invalid-email":
     case "auth/missing-email":
@@ -62,7 +62,7 @@ export function mapError(err: any) {
       return new UserNotFoundException();
 
     case "auth/email-already-in-use":
-    case "auth/credential-already-in-use": // Added this for Google linking issues
+    case "auth/credential-already-in-use":
       return new EmailAlreadyInUseException();
 
     case "auth/weak-password":
@@ -120,7 +120,7 @@ export async function signUpWithEmail(email: string, password: string) {
 export async function signInWithGoogle() {
   const auth = getAuth();
   try {
-    // 1. Check Play Services
+    
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
     const userInfo = await GoogleSignin.signIn();
@@ -154,7 +154,7 @@ export async function signInWithApple() {
     if (!idToken) throw new Error("NO_ID_TOKEN");
 
     const provider = new OAuthProvider("apple.com");
-    // provider.credential() accepts idToken and optionally rawNonce
+
     const firebaseCred = provider.credential({ idToken });
 
     const res = await signInWithCredential(auth, firebaseCred);
@@ -197,14 +197,14 @@ export async function logout() {
 export function monitorAuthState() {
   const auth = getAuth();
 
-  // This listens to FIREBASE directly
+
   const unsubscribe = onAuthStateChanged(auth, (user) => {
     if (user) {
       console.log("SDK Monitor: User Restored");
-      useAuthSDK.getState().signIn(user); // Updates store -> initialized = true
+      useAuthSDK.getState().signIn(user); 
     } else {
       console.log("SDK Monitor: No User");
-      useAuthSDK.getState().signOut(); // Updates store -> initialized = true
+      useAuthSDK.getState().signOut(); 
     }
   });
 

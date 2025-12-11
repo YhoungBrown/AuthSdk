@@ -215,9 +215,7 @@ export const AuthRegisterScreen = ({
   );
 };
 
-// ------------------------------------------------------------------
-// 3. STYLES
-// ------------------------------------------------------------------
+
 
 const toastStyles = StyleSheet.create({
   container: {

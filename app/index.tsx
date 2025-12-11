@@ -2,7 +2,7 @@ import { Redirect, router } from "expo-router";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
-// Import UI and Logic from YOUR SDK
+
 import { AuthLoginScreen, signInWithGoogle, useAuthSDK } from "hng-auth-sdk";
 
 export default function IndexRoute() {
@@ -27,12 +27,12 @@ export default function IndexRoute() {
     );
   }
 
-  // 3. Render YOUR SDK UI
+
   return (
     <AuthLoginScreen
       config={{
         enableGoogle: true,
-        enableApple: false, // Set to true if you have Apple config
+        enableApple: false, 
       }}
       onSuccess={(user) => {
         console.log("Login Success:", user.email);
@@ -46,8 +46,7 @@ export default function IndexRoute() {
       }}
       onGooglePress={async () => {
         await signInWithGoogle();
-        // No need to navigate here, the 'status' change will trigger the Redirect above
-        // OR the onSuccess callback if you wired it that way.
+       
       }}
     />
   );

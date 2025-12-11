@@ -6,13 +6,12 @@ export default function SignUpRoute() {
   return (
     <AuthRegisterScreen
       onSuccess={(user) => {
-        // Option A: Go straight to tabs
+        
         router.replace("/(tabs)");
-        // Option B: Go to login
-        // router.replace("/");
+      
       }}
       onLoginPress={() => {
-        router.back(); // Go back to Index (Login)
+        router.back(); 
       }}
     />
   );

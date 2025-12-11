@@ -1,8 +1,4 @@
 
-/**
- * Tests for core auth-service functions. We mock firebase/auth and
- * external sign-in modules to avoid real network calls.
- */
 
 jest.mock('expo-secure-store', () => ({
   setItemAsync: jest.fn(async () => true),
