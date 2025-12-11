@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { signUpWithEmail } from "../core/auth-service";
+import { signUpWithEmail } from "hng-auth-sdk";
 
 import { AuthRegisterProps } from "../types";
 
