@@ -13,7 +13,7 @@ import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import TopAlert from "@/components/top-alert";
-import { logout } from "@/hng-auth-sdk/src/core/auth-service";
+import { logout } from "hng-auth-sdk";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 
