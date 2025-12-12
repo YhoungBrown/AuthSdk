@@ -21,7 +21,8 @@ import {
   signInWithApple,
   signInWithEmail,
   signInWithGoogle,
-} from "hng-auth-sdk";
+} from "../core/auth-service";
+
 
 import { AuthLoginProps } from "../types";
 
