@@ -1,4 +1,9 @@
 import { RelativePathString, router } from "expo-router";
+import {
+  AuthOperationFailedException,
+  forgotPassword,
+  mapError,
+} from "hng-auth-sdk";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,7 +19,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import TopAlert from "@/components/top-alert";
 import styles from "@/stylesheets/reset-password-stylesheet";
-import { forgotPassword } from "hng-auth-sdk";
 
 const Index = () => {
   const inset = useSafeAreaInsets();
@@ -48,10 +52,20 @@ const Index = () => {
 
       setEmail("");
     } catch (error: any) {
-      setAlert({
-        message: error.message || "Failed to send reset email",
-        type: "error",
-      });
+      // Developer can access mapped errors
+      const mapped = mapError(error);
+
+      if (mapped instanceof AuthOperationFailedException) {
+        setAlert({
+          message: "Operation failed",
+          type: "error",
+        });
+      } else {
+        setAlert({
+          message: "Another thing",
+          type: "error",
+        });
+      }
     } finally {
       setLoading(false);
     }
