@@ -52,7 +52,7 @@ const Index = () => {
 
       setEmail("");
     } catch (error: any) {
-      // Developer can access mapped errors
+      // Developer can access mapped errors here and show their own error
       const mapped = mapError(error);
 
       if (mapped instanceof AuthOperationFailedException) {
