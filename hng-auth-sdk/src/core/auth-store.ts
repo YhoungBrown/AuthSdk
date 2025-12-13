@@ -1,8 +1,8 @@
-// File: hng-auth-sdk/src/core/auth-store.ts
+
 
 import { User } from "firebase/auth";
 import { create } from "zustand";
-import { AuthState } from "../types"; // Make sure you import types if you separated them
+import { AuthState } from "../types"; 
 
 export const useAuthSDK = create<AuthState>((set) => ({
   status: "unauthenticated",
@@ -22,7 +22,7 @@ export const useAuthSDK = create<AuthState>((set) => ({
       initialized: true,
     }),
 
-  // mark token as expired (used by auth-service when mapping token errors)
+  
   setTokenExpired: () =>
     set({
       status: "tokenExpired",
@@ -31,7 +31,7 @@ export const useAuthSDK = create<AuthState>((set) => ({
     }),
 }));
 
-// Listener remains the same
+
 export const onAuthStateChanged = (callback: (user: User | null) => void) => {
   return useAuthSDK.subscribe((state) => callback(state.user));
 };

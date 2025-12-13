@@ -1,4 +1,4 @@
-// File: hng-auth-sdk/src/core/auth-exception.ts
+
 
 export class InvalidCredentialsException extends Error {
   constructor(message: string = "Invalid email or password.") {
@@ -42,6 +42,6 @@ export class NetworkException extends Error {
   }
 }
 
-// Additional helpful exceptions
+
 export class TooManyRequestsException extends Error {}
 export class AuthOperationFailedException extends Error {}

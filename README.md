@@ -18,6 +18,8 @@ It supports both **Headless Mode (logic only)** and **Default Mode (Pre-built UI
 
 ## 1. Installation
 
+https://www.npmjs.com/package/hng-auth-sdk?activeTab=readme
+
 If using npm:
 ```bash
 npm install hng-auth-sdk

@@ -23,6 +23,7 @@ import {
   signInWithGoogle,
 } from "../core/auth-service";
 
+
 import { AuthLoginProps } from "../types";
 
 const { width } = Dimensions.get("window");

@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { signUpWithEmail } from "../core/auth-service";
 
+
 import { AuthRegisterProps } from "../types";
 
 const SDKToast = ({
@@ -215,9 +216,7 @@ export const AuthRegisterScreen = ({
   );
 };
 
-// ------------------------------------------------------------------
-// 3. STYLES
-// ------------------------------------------------------------------
+
 
 const toastStyles = StyleSheet.create({
   container: {
